@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My codePlayer</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header">
+        <div id="logo">
+            CodePlayer
+        </div>
+        <div id="buttonContainer">
+            <div class="toggleButton active" id="html">
+                HTML
+            </div>
+            <div class="toggleButton" id="css">
+                CSS
+            </div>
+            <div class="toggleButton" id="js">
+                JavaScript
+            </div>
+            <div class="toggleButton" id="output">
+                Output
+            </div>
+        </div>
+    </div>
+
+    <div id="bodyContainer">
+        <textarea id="htmlPanel" class="panel"></textarea>
+        <textarea id="cssPanel" class="panel hidden"></textarea>
+        <textarea id="jsPanel" class="panel hidden"></textarea>
+        <iframe id="outPutPanel" class="panel"></iframe>
+    </div>
+
+    <script>
+        function updateOutput(){
+            $("iframe").contents().find("html").html("<html><head><style>" 
+            + $("#cssPanel").val() + "</style></head></body>"
+            + $("#htmlPanel").val());
+
+            document.getElementById("outPutPanel").contentWindow.eval($("#jsPanel").val());
+            
+        }
+        // add hover event to the button with jQuery
+        $(".toggleButton").hover(function(){
+            // $(this).css("background-color", "grey");
+            $(this).addClass("highlighted");
+        }, function(){
+            $(this).removeClass("highlighted")
+        });
+
+        // toggle class
+        $(".toggleButton").click(function(){
+            $(this).toggleClass("active");
+            $(this).removeClass("highlighted");
+            var panelId = $(this).attr("id") + "Panel";
+            $("#" + panelId).toggleClass("hidden");
+            var numberOfActivePanels = 4 - $('.hidden').length;
+            $(".panel").width(($(window).width() / numberOfActivePanels) - 10);
+        });
+
+        $(".panel").height($(window).height() - $("#header").height());
+        $(".panel").width($(window).width() / 2 - 10);
+        // we wanna update the output when users update their input
+        updateOutput();
+        $("textarea").on('change keyup paste', function(){
+            updateOutput();
+        })
+    </script>
+</body>
+</html>
